@@ -10,22 +10,34 @@
     "lint": "jshint src/js",
     "css": "lessc src/less/MyersDiff.less build/myersdiffui.css",
     "prebuild": "npm run lint && npm run clean && mkdir build",
-    "build": "npm run css & browserify -d src/js/MyersDiffUI.js -o build/myersdiffui.js -t [ babelify --presets [ es2015 ] ]",
-    "copybootstrapdist": "mkdir dist/bootstrap/ && copyfiles -u 3 'node_modules/bootstrap/dist/**/*' dist/bootstrap",
-    "prepackage": "npm run build && copyfiles -u 1 web/* build && mkdir dist && copyfiles -u 1 build/* dist & npm run copybootstrapdist",
+    "build": "npm run css & browserify -d src/js/Viewport.js -o build/myersdiffui.js -t [ babelify ]",
+    "prepackage": "npm run build && copyfiles -u 1 web/* build && mkdir dist && copyfiles -u 1 build/* dist",
     "package": "echo (Create WAR)",
-    "server": "npm run prepackage && http-server -p 9090 dist/",
-    "env": "env"
+    "watch": "watch \"npm run prepackage\" src/ --wait=5 -d",
+    "livereload": "live-reload --port 9091 dist/",
+    "start": "http-server -p 9090 dist/",
+    "test-all": "mocha --compilers js:babel-core/register --recursive test/"
   },
   "dependencies": {
     "bootstrap": "^3.3.6"
   },
   "devDependencies": {
-    "less": "^2.6.1",
+    "babel-core": "^6.7.7",
     "babel-preset-es2015": "^6.6.0",
+    "babel-register": "^6.7.2",
     "babelify": "^7.3.0",
+    "chai": "^3.5.0",
     "http-server": "^0.9.0",
     "jshint": "^2.9.2",
-    "rimraf": "^2.5.2"
+    "karma": "^0.13.22",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-cli": "^0.1.2",
+    "karma-mocha": "^0.2.2",
+    "less": "^2.6.1",
+    "live-reload": "^1.1.0",
+    "mocha": "^2.4.5",
+    "rimraf": "^2.5.2",
+    "sinon": "^1.17.3",
+    "watch": "^0.17.1"
   }
 }
