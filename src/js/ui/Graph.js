@@ -120,7 +120,7 @@ export default class Graph extends AbstractComponent {
 
             context.lineTo(endX, endY);
             context.stroke();
-            context.fillText(k.toString(), endX + 10, endY + 10);
+            context.fillText(k.toString(), endX + (k < 0 ? 0 : 10), endY + 10);
 
             if (i === y - 2) {
                 startY = 0;

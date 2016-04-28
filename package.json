@@ -16,7 +16,7 @@
     "watch": "watch \"npm run prepackage\" src/ --wait=5 -d",
     "livereload": "live-reload --port 9091 dist/",
     "start": "http-server -p 9090 dist/",
-    "test-all": "mocha --compilers js:babel-core/register --recursive test/"
+    "test-all": "karma start --single-run"
   },
   "dependencies": {
     "bootstrap": "^3.3.6"
@@ -31,6 +31,7 @@
     "jshint": "^2.9.2",
     "karma": "^0.13.22",
     "karma-babel-preprocessor": "^6.0.1",
+    "karma-browserify": "^5.0.4",
     "karma-cli": "^0.1.2",
     "karma-mocha": "^0.2.2",
     "less": "^2.6.1",
@@ -38,6 +39,7 @@
     "mocha": "^2.4.5",
     "rimraf": "^2.5.2",
     "sinon": "^1.17.3",
-    "watch": "^0.17.1"
+    "watch": "^0.17.1",
+    "watchify": "^3.7.0"
   }
 }
