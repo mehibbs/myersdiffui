@@ -6,12 +6,13 @@
     "esversion": 6
   },
   "scripts": {
+    "copystaticdeps": "copyfiles -u 4 node_modules/bootstrap/dist/css/* dist",
     "clean": "rimraf build & rimraf dist",
     "lint": "jshint src/js",
     "css": "lessc src/less/MyersDiff.less build/myersdiffui.css",
     "prebuild": "npm run lint && npm run clean && mkdir build",
-    "build": "npm run css & browserify -d src/js/Viewport.js -o build/myersdiffui.js -t [ babelify ]",
-    "prepackage": "npm run build && copyfiles -u 1 web/* build && mkdir dist && copyfiles -u 1 build/* dist",
+    "build": "npm run css & browserify -d src/js/Application.js -o build/myersdiffui.js -t [ babelify ]",
+    "prepackage": "npm run build && copyfiles -u 1 web/* build && mkdir dist && copyfiles -u 1 build/* dist & npm run copystaticdeps",
     "package": "echo (Create WAR)",
     "watch": "watch \"npm run prepackage\" src/ --wait=5 -d",
     "livereload": "live-reload --port 9091 dist/",
@@ -19,7 +20,9 @@
     "test-all": "karma start --single-run"
   },
   "dependencies": {
-    "bootstrap": "^3.3.6"
+    "bootstrap": "^3.3.6",
+    "lodash": "^4.11.1",
+    "mustache": "^2.2.1"
   },
   "devDependencies": {
     "babel-core": "^6.7.7",
