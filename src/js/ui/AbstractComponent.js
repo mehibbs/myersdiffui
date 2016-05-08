@@ -40,19 +40,4 @@ export default class AbstractComponent extends Observable {
         throw new Error('Extending class should implement #render');
     }
 
-    /**
-     * Turns the given HTML string into an element.
-     * Assumes single root element within the HTML string.
-     *
-     * @param {String} html
-     * @return {HTMLElement}
-     */
-    getHTMLStringAsElement(html) {
-        //.insertAdjacentHTML('beforeend', html) is a neat trick, but it unfortunately doesn't return the created element
-        let tempEl = document.createElement('div');
-        tempEl.innerHTML = html;
-
-        return tempEl.firstChild;
-    }
-
 }

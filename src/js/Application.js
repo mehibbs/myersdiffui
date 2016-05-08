@@ -8,8 +8,15 @@ myersDiffUI.render();
 let myersAlgorithm;
 
 myersDiffUI.addListener('drawClicked', new Listener(function(source, destination) {
-    myersAlgorithm = new MyersAlgorithm(source, destination, function(fromPoint, toPoint) {
-        myersDiffUI.renderPath(fromPoint, toPoint);
+    myersAlgorithm = new MyersAlgorithm({
+        source: source,
+        dest: destination,
+        pathTraceFn: function(fromPoint, toPoint) {
+            myersDiffUI.renderPath(fromPoint, toPoint);
+        },
+        logFn: function(text) {
+            myersDiffUI.logText(text);
+        }
     });
     // Ready to solve/step, enable the buttons
     myersDiffUI.setSolutionButtonsEnabled(true);

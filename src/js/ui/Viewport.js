@@ -61,6 +61,15 @@ export default class Viewport extends AbstractComponent {
     }
 
     /**
+     * Draws the given text in our log view.
+     *
+     * @param {String} text
+     */
+    logText(text) {
+        this.console.addText(text);
+    }
+
+    /**
      * Renders a path from/to the points.
      *
      * @param {Point} fromPoint

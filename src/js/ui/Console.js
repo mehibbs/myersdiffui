@@ -1,17 +1,26 @@
 import AbstractComponent from "./AbstractComponent";
 
-export default class Console extends AbstractComponent {
+const TEMPLATE = '<div class="console" style="font-family: Courier, monospace">' + // TODO - Move to CSS
+                 '</div>';
 
-    // TODO - Implement
+export default class Console extends AbstractComponent {
 
     /**
      * @see AbstractComponent#render
      */
     render() {
-        var consoleDiv = document.createElement('div');
-        consoleDiv.className = 'console';
+        this.renderTo.insertAdjacentHTML('beforeend', TEMPLATE);
+        this._renderedEl = this.renderTo.lastElementChild;
+    }
 
-        this.renderTo.appendChild(consoleDiv);
+    /**
+     * Logs the given text to our "console".
+     *
+     * @param {String} text
+     */
+    addText(text) {
+        this._renderedEl.appendChild(document.createTextNode(text));
+        this._renderedEl.appendChild(document.createElement('br'));
     }
 
 }

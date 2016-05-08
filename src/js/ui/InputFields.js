@@ -26,8 +26,8 @@ export default class InputFields extends AbstractComponent {
      * @see AbstractComponent#render
      */
     render() {
-        this._renderedEl = this.getHTMLStringAsElement(TEMPLATE);
-        this.renderTo.appendChild(this._renderedEl);
+        this.renderTo.insertAdjacentHTML('beforeend', TEMPLATE);
+        this._renderedEl = this.renderTo.lastElementChild;
         this._attachDomEvents();
     }
 
