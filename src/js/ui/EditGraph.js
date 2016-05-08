@@ -4,8 +4,10 @@ import Point from "../model/Point";
 const GRID_COLOUR = '#000';
 const K_LINE_STYLE = '#ccc';
 const BRIDGE_STYLE = '#cc00cc';
+const BRIDGE_WIDTH = 2;
 const SNAKE_STYLE = '#ff3300';
 const SNAKE_WIDTH =  3;
+const SOLUTION_STYLE = '#0033ff';
 const K_LINE_NUMBER_FONT = '10px Courier';
 const COMPARE_TEXT_FONT = '20px Courier bold';
 
@@ -60,7 +62,7 @@ export default class EditGraph extends AbstractComponent {
 
         let x = source.length + 1;
         let y = dest.length + 1;
-        this._setDimensions((x + 3) * this.cellSize, (y + 3) * this.cellSize);
+        this._setDimensions((x + 2) * this.cellSize, (y + 2) * this.cellSize);
         this._drawSourceText(source);
         this._drawDestText(dest);
         this._drawXLines(x, y);
@@ -74,10 +76,11 @@ export default class EditGraph extends AbstractComponent {
      *
      * @param {Point} fromPoint
      * @param {Point} toPoint
+     * @param {Boolean} isSolution
      */
-    drawLink(fromPoint, toPoint) {
+    drawLink(fromPoint, toPoint, isSolution) {
         this.getContext().lineWidth = SNAKE_WIDTH; // reset?
-        this._drawLineFromPoints(fromPoint, toPoint, SNAKE_STYLE);
+        this._drawLineFromPoints(fromPoint, toPoint, isSolution ? SOLUTION_STYLE : SNAKE_STYLE);
     }
 
     _setDimensions(width, height) {
@@ -115,6 +118,7 @@ export default class EditGraph extends AbstractComponent {
     }
 
     _drawBridges(source, dest) {
+        this.getContext().lineWidth = BRIDGE_WIDTH;
         // Compare every character, where they match draw a diagonal bridge on the graph
         [...source].forEach(function(sourceChar, sourceIndex) {
            [...dest].forEach(function(destChar, destIndex) {

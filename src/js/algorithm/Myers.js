@@ -8,11 +8,12 @@ export default class Myers {
 
     //{String} source;
     //{String} dest;
-    //{Number[]} kLinePoints;
+    //{Object} kLinePoints;
     //{Function} pathTraceFn;
     //{Function} logFn;
 
     //{Number} _currentStep;
+    //{Object[]} _allPoints
 
     /**
      * Creates an instance of Myers algorithm, ready to run on the given texts.
@@ -20,7 +21,7 @@ export default class Myers {
      * @param {Object} config
      *     @config {String} source
      *     @config {String} dest
-     *     @config {Function} pathTraceFn Should accept ({Point} from, {Point} to)
+     *     @config {Function} pathTraceFn Should accept ({Point} from, {Point} to, {Boolean} [isSolution])
      *     @config {Function} logFn Should accept ({String} text)
      */
     constructor(config) {
@@ -31,9 +32,10 @@ export default class Myers {
         // Array storing current (furthest) x coords on k-lines (k-line is index into array)
         // And y = x - k so any Point can be calculated
         // Initialize for the starting Point (0, -1) "differences = 0" (i.e. x = 0 on k = 1 -> y = 0 - 1) so the first path can be calculated
-        this.kLinePoints = [];
-        this.kLinePoints[1] = 0;
+        this.kLinePoints = {};
+        this.kLinePoints['1'] = 0;
         this._currentStep = 0;
+        this._allPoints = [];
     }
 
     /**
@@ -74,22 +76,29 @@ export default class Myers {
         // (or "snake" - a move including diagonals) is -differences up to +differences - this is easier to see on the EditGraph.
         // Also if you're on an odd k-line you can only reach even k-lines (and vice-versa) hence the += 2
         // (and for any even/odd number of differences you will be on an even/odd k-line respectively)
-        this.logFn(`Scanning ${forTotalDifferences % 2 === 0 ? 'even' : 'odd'} k-lines from [${-forTotalDifferences}] to [${forTotalDifferences}]`);
+        this.logFn(`Differences: ${forTotalDifferences}`);
+        this.logFn(`Scanning ${forTotalDifferences % 2 === 0 ? 'even' : 'odd'} k-lines from [${-forTotalDifferences}] to [${forTotalDifferences}]:`);
+
         for (let currentK = -forTotalDifferences ; currentK <= forTotalDifferences ; currentK += 2 ) {
 
             // Now we need to decide whether we need to move down or to the right to reach the given k-line "k"
             let down;
             if (currentK === -forTotalDifferences) {
                 // At the lower extreme the only possible move is downwards
+                this.logFn(`Lower extreme k-line[${currentK}], moving down`);
                 down = true;
             } else if (currentK == forTotalDifferences) {
                 // At the upper extreme the only possible move is right
+                this.logFn(`Upper extreme k-line[${currentK}], moving right`);
                 down = false;
             } else {
                 // Else choose the direction which gets us to the furthest point by checking the x value of the
                 // k-lines above and below, if the one above is furthest we will move downwards from there
                 // (else we'll be moving right from the one below)
                 down = this.kLinePoints[currentK - 1] < this.kLinePoints[currentK + 1];
+                // Moving down as k-line[-1] last xPos was 5 and k-line[2] was 6
+                this.logFn(`Moving ${down ? 'down' : 'right'} as k-line[${currentK  - 1}] last xPos = ${this.kLinePoints[currentK - 1]} and ` +
+                           `k-line[${currentK + 1}] last xPos = ${this.kLinePoints[currentK + 1]}`);
             }
 
             let movingFrom = down ? currentK + 1 : currentK - 1;
@@ -116,16 +125,67 @@ export default class Myers {
                 // Move "start" along in-case of more diagonal moves
                 xEnd = xDiagonalEnd;
                 yEnd = yDiagonalEnd;
+                this.logFn('(Following diagonal)');
             }
 
             // Store new furthest end point on this k-line, note we are not interfering with our calculations in subsequent
             // loops because we're only checking odd or even for any given difference total
             this.kLinePoints[ currentK ] = xEnd;
 
+            this._storeKLineState();
+
             // Check whether we've found a solution
             if (xEnd >= this.source.length && yEnd >= this.dest.length) {
+                this.logFn('*Solution Found*');
+                this._traceSolution();
                 return true;
             }
+        }
+
+        this.logFn('---');
+    }
+
+    _storeKLineState() {
+        this._allPoints[this._currentStep] = Object.assign({}, this.kLinePoints);
+    }
+
+    _traceSolution() {
+        // TODO - Clean up and explain trace
+        // End (bottom right)
+        let currentX = this.source.length;
+        let currentY = this.dest.length;
+        // Work backwards from total differences, tracing the path until reaching Point(0,0)
+        for (let differences = this._allPoints.length - 1 ; currentX > 0 || currentY > 0 ; differences-- ) {
+            // Get state of k-line points at "differences"
+            let kLinePoints = this._allPoints[differences];
+
+            let k = currentX - currentY;
+
+            // End point is in kLinePoints
+            let xEnd = kLinePoints[k];
+            let yEnd = xEnd - k;
+
+            // Work out direction (down or right)
+            let down = (k == -differences || ( k != differences && kLinePoints[k - 1] < kLinePoints[k + 1] ));
+
+            let kPrev = down ? k + 1 : k - 1;
+
+            // Start point
+            let xStart = kLinePoints[kPrev];
+            let yStart = xStart - kPrev;
+
+            // Mid point
+            let xMid = down ? xStart : xStart + 1;
+            let yMid = xMid - k;
+
+            this.pathTraceFn(new Point(currentX, currentY), new Point(xEnd, yEnd), true);
+
+            this.pathTraceFn(new Point(xMid, yMid), new Point(xStart, yStart), true);
+
+            this.pathTraceFn(new Point(xMid, yMid), new Point(xEnd, yEnd), true);
+
+            currentX = xStart;
+            currentY = yStart;
         }
     }
 

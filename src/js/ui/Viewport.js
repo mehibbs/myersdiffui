@@ -70,13 +70,21 @@ export default class Viewport extends AbstractComponent {
     }
 
     /**
+     * Clears any currently logged text.
+     */
+    clearLog() {
+        this.console.clear();
+    }
+
+    /**
      * Renders a path from/to the points.
      *
      * @param {Point} fromPoint
      * @param {Point} toPoint
+     * @param {Boolean} [isSolution=false]
      */
-    renderPath(fromPoint, toPoint) {
-        this.graph.drawLink(fromPoint, toPoint);
+    renderPath(fromPoint, toPoint, isSolution) {
+        this.graph.drawLink(fromPoint, toPoint, isSolution === true);
     }
 
 }
