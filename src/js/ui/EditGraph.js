@@ -2,9 +2,10 @@ import AbstractComponent from "./AbstractComponent";
 import Point from "../model/Point";
 
 const GRID_COLOUR = '#000';
-const K_LINE_COLOUR = '#ccc';
-const BRIDGE_COLOUR = '#cc00cc';
-const SNAKE_COLOUR = '#ff3300';
+const K_LINE_STYLE = '#ccc';
+const BRIDGE_STYLE = '#cc00cc';
+const SNAKE_STYLE = '#ff3300';
+const SNAKE_WIDTH =  3;
 const K_LINE_NUMBER_FONT = '10px Courier';
 const COMPARE_TEXT_FONT = '20px Courier bold';
 
@@ -75,7 +76,8 @@ export default class EditGraph extends AbstractComponent {
      * @param {Point} toPoint
      */
     drawLink(fromPoint, toPoint) {
-        this._drawLineFromPoints(fromPoint, toPoint, SNAKE_COLOUR);
+        this.getContext().lineWidth = SNAKE_WIDTH; // reset?
+        this._drawLineFromPoints(fromPoint, toPoint, SNAKE_STYLE);
     }
 
     _setDimensions(width, height) {
@@ -120,7 +122,7 @@ export default class EditGraph extends AbstractComponent {
 
                     let startPoint = new Point(sourceIndex, destIndex);
                     let endPoint = new Point(sourceIndex + 1, destIndex + 1);
-                    this._drawLineFromPoints(startPoint, endPoint, BRIDGE_COLOUR);
+                    this._drawLineFromPoints(startPoint, endPoint, BRIDGE_STYLE);
 
                 }
             }, this);
@@ -202,8 +204,8 @@ export default class EditGraph extends AbstractComponent {
         let k = 0;
         let lineEnd;
 
-        context.strokeStyle = K_LINE_COLOUR;
-        context.fillStyle = K_LINE_COLOUR;
+        context.strokeStyle = K_LINE_STYLE;
+        context.fillStyle = K_LINE_STYLE;
         context.font = K_LINE_NUMBER_FONT;
         context.globalAlpha = 0.5;
 

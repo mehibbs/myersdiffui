@@ -2,12 +2,27 @@ import MyersDiffUI from "./ui/Viewport";
 import MyersAlgorithm from "./algorithm/Myers";
 import Listener from "./util/Listener";
 
-var myersDiffUI = new MyersDiffUI();
+let myersDiffUI = new MyersDiffUI();
 myersDiffUI.render();
 
-myersDiffUI.addListener('diffTextChanged', new Listener(function(source, destination) {
-    // TODO - Run through algorithm
+let myersAlgorithm;
+
+myersDiffUI.addListener('drawClicked', new Listener(function(source, destination) {
+    myersAlgorithm = new MyersAlgorithm(source, destination, function(fromPoint, toPoint) {
+        myersDiffUI.renderPath(fromPoint, toPoint);
+    });
+    // Ready to solve/step, enable the buttons
+    myersDiffUI.setSolutionButtonsEnabled(true);
 }, this));
 
-var myersAlgorithm = new MyersAlgorithm();
+myersDiffUI.addListener('solveClicked', new Listener(function() {
+    myersAlgorithm.solve();
+    myersDiffUI.setSolutionButtonsEnabled(false);
+}, this));
 
+myersDiffUI.addListener('stepClicked', new Listener(function() {
+    if (myersAlgorithm.step()) {
+        // Solution has been found, disable the buttons
+        myersDiffUI.setSolutionButtonsEnabled(false);
+    }
+}, this));

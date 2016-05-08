@@ -7,7 +7,9 @@ import Listener from "../util/Listener";
 export default class Viewport extends AbstractComponent {
 
     //EVENTS:
-    //  'diffTextChanged' ( {String} source, {String} destination );
+    //  'drawClicked' ( {String} source, {String} destination );
+    //  'solveClicked'
+    //  'stepClicked'
 
     //{Console} console;
     //{EditGraph} graph;
@@ -18,21 +20,25 @@ export default class Viewport extends AbstractComponent {
     constructor(config) {
         super(config);
 
-        // TODO - Move to AbstractComponent#addChildComponent
         this.graph = new Graph({ renderTo: this.renderTo });
+
         this.inputFields = new InputFields({
             renderTo: this.renderTo,
             listeners: {
                 'drawClicked': new Listener(function(source, destination) {
                     this.graph.drawGraph(source, destination);
-                    this.fireEvent('diffTextChanged', source, destination);
+                    this.fireEvent('drawClicked', source, destination);
+                }, this),
+                'solveClicked': new Listener(function() {
+                    this.fireEvent('solveClicked');
+                }, this),
+                'stepClicked': new Listener(function() {
+                    this.fireEvent('stepClicked');
                 }, this)
             }
         });
-        this.console = new Console({ renderTo: this.renderTo });
 
-        // TODO - Testing only
-        window.graph = this.graph;
+        this.console = new Console({ renderTo: this.renderTo });
     }
 
     /**
@@ -42,6 +48,26 @@ export default class Viewport extends AbstractComponent {
         this.graph.render();
         this.inputFields.render();
         this.console.render();
+    }
+
+    /**
+     * Enables/disables the solution (solve/step) buttons.
+     *
+     * @param {Boolean} enabled
+     */
+    setSolutionButtonsEnabled(enabled) {
+        this.inputFields.setSolveButtonEnabled(enabled);
+        this.inputFields.setStepButtonEnabled(enabled);
+    }
+
+    /**
+     * Renders a path from/to the points.
+     *
+     * @param {Point} fromPoint
+     * @param {Point} toPoint
+     */
+    renderPath(fromPoint, toPoint) {
+        this.graph.drawLink(fromPoint, toPoint);
     }
 
 }
